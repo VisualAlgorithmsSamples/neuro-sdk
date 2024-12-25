@@ -90,16 +90,16 @@ namespace NeuroSdk.Json
         public int? MaxLength { get; set; }
 
         [JsonProperty("maximum")]
-        public int? Maximum { get; set; }
+        public float? Maximum { get; set; }
 
         [JsonProperty("exclusiveMinimum")]
-        public int? ExclusiveMinimum { get; set; }
+        public float? ExclusiveMinimum { get; set; }
 
         [JsonProperty("exclusiveMaximum")]
-        public int? ExclusiveMaximum { get; set; }
+        public float? ExclusiveMaximum { get; set; }
 
         [JsonProperty("minimum")]
-        public int? Minimum { get; set; }
+        public float? Minimum { get; set; }
 
         [JsonProperty("required")]
         private List<string>? _required;
