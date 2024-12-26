@@ -48,8 +48,6 @@ namespace NeuroSdk.Websocket
 
         private async UniTask StartWs()
         {
-            Debug.LogWarning("Initializing WebSocket connection");
-
             try
             {
                 if (_socket?.State is WebSocketState.Open or WebSocketState.Connecting) await _socket.Close();
@@ -127,13 +125,15 @@ namespace NeuroSdk.Websocket
             };
             _socket.OnError += error =>
             {
-                Debug.LogError("Websocket connection has encountered an error!");
-                Debug.LogError(error);
-                Reconnect().Forget();
+                if (error != "Unable to connect to the remote server")
+                {
+                    Debug.LogError("Websocket connection has encountered an error!");
+                    Debug.LogError(error);
+                }
             };
-            _socket.OnClose += _ =>
+            _socket.OnClose += code =>
             {
-                Debug.LogError("Websocket connection has been closed!");
+                if (code != WebSocketCloseCode.Abnormal) Debug.LogWarning($"Websocket connection has been closed with code {code}!");
                 Reconnect().Forget();
             };
             await _socket.Connect();
