@@ -131,6 +131,10 @@ An `ActionWindow` can be in one of 4 possible states:
 - `Forced`: An action force has been sent for this window.
 - `Ended`: This window has successfuly received an action and is waiting to be destroyed.
 
+> [!Important]  
+> Since the API doesn't support multiple `actions/force` messages at the same time, you need to make sure you don't have multiple action windows in the `Forced` state at the same time.  
+> Easiest way to prevent this is to only ever have one active action window at a time.
+
 ### Adding a Context
 
 If you want to add a context message to an action window, you can use the method `void ActionWindow.SetContext(string message, bool silent)`. This will send the context message when the window is registered. Use this to pass in state relevant to the available actions.
