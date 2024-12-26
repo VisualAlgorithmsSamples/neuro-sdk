@@ -1,6 +1,9 @@
 # Changelog
 
-Last update: 22nd of December 2024, 05:00 GMT
+Last update: 26th of December 2024, 19:00 GMT
+
+## 26th of December 2024, 19:00 GMT
+- Fixed an issue in the Unity SDK which caused infinite task multiplication if the websocket client could not connect to the server (#29). Please update as soon as possible to version `1.1.6`.
 
 ## 22nd of December 2024, 22:00 GMT
 - The Godot SDK has been published to the [Godot Asset Library](https://godotengine.org/asset-library/asset/14968). (It's still pending review at the moment, but there is a direct download [here](https://github.com/VedalAI/neuro-game-sdk/releases/tag/godot).)
