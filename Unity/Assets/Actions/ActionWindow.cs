@@ -204,7 +204,7 @@ namespace NeuroSdk.Actions
         private Func<bool>? _shouldEndFunc;
 
         /// <summary>
-        /// Specify a condition under which the actions should be unregisterd and this window closed.
+        /// Specify a condition under which the actions should be unregistered and this window closed.
         /// </summary>
         /// <param name="shouldEnd">When this returns true, the actions will be unregistered.</param>
         public void SetEnd(Func<bool> shouldEnd)
@@ -247,7 +247,7 @@ namespace NeuroSdk.Actions
         /// </summary>
         public ExecutionResult Result(ExecutionResult result)
         {
-            if (CurrentState <= State.Building) throw new InvalidOperationException("Cannot handle a result before registering thet ActionWindow.");
+            if (CurrentState <= State.Building) throw new InvalidOperationException("Cannot handle a result before registering the ActionWindow.");
             if (CurrentState >= State.Ended) throw new InvalidOperationException("Cannot handle a result after the ActionWindow has ended.");
 
             if (result.Successful) End();
