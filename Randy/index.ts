@@ -17,6 +17,7 @@ const wss = new WebSocketServer({port: 8000});
 
 let connections: WebSocket[] = [];
 let actions: Action[] = [];
+let pendingResults: { [id: string]: string } = {};
 
 wss.on("connection", function connection(ws) {
     console.log("+ Connection opened");
@@ -29,6 +30,23 @@ wss.on("connection", function connection(ws) {
 
     send({command: "actions/reregister_all"});
 });
+
+function sendAction(actionName: string) {
+    const id = Math.random().toString();
+
+    if (actionName == "choose_name") {
+        send({command: "action", data: {id, name: "choose_name", data: JSON.stringify({name: "RANDY"})}});
+        return;
+    }
+
+    const action = actions.find(a => a.name === actionName);
+    if (!action) return;
+
+    const responseObj = !action?.schema ? undefined : JSON.stringify(JSONSchemaFaker.generate(action.schema));
+
+    send({command: "action", data: {id, name: action.name, data: responseObj}});
+    pendingResults[id] = actionName;
+}
 
 async function onMessageReceived(message: Message) {
     console.log("<---", util.inspect(message, false, null, true));
@@ -46,19 +64,18 @@ async function onMessageReceived(message: Message) {
 
         case "actions/force": {
             setTimeout(() => {
-                const actionName: string = message.data.action_names[Math.floor(Math.random() * message.data.action_names.length)];
+                sendAction(message.data.action_names[Math.floor(Math.random() * message.data.action_names.length)]);
+            }, 500);
+            break;
+        }
 
-                if (actionName == "choose_name") {
-                    send({command: "action", data: {id: Math.random().toString(), name: "choose_name", data: JSON.stringify({name: "RANDY"})}});
-                    return;
+        case "action/result": {
+            setTimeout(() => {
+                if (message.data.id in pendingResults) {
+                    const actionName = pendingResults[message.data.id];
+                    delete pendingResults[message.data.id];
+                    if (!message.data.success) sendAction(actionName);
                 }
-
-                const action = actions.find(a => a.name === actionName);
-                if (!action) return;
-
-                const responseObj = !action?.schema ? undefined : JSON.stringify(JSONSchemaFaker.generate(action.schema));
-
-                send({command: "action", data: {id: Math.random().toString(), name: action.name, data: responseObj}});
             }, 500);
             break;
         }
