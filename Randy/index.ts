@@ -17,7 +17,8 @@ const wss = new WebSocketServer({port: 8000});
 
 let connections: WebSocket[] = [];
 let actions: Action[] = [];
-let pendingResults: { [id: string]: string } = {};
+let pendingResult: { id: string; actionName: string } | null = null;
+let actionForceQueue: string[] = [];
 
 wss.on("connection", function connection(ws) {
     console.log("+ Connection opened");
@@ -45,7 +46,7 @@ function sendAction(actionName: string) {
     const responseObj = !action?.schema ? undefined : JSON.stringify(JSONSchemaFaker.generate(action.schema));
 
     send({command: "action", data: {id, name: action.name, data: responseObj}});
-    pendingResults[id] = actionName;
+    pendingResult = {id, actionName};
 }
 
 async function onMessageReceived(message: Message) {
@@ -63,20 +64,34 @@ async function onMessageReceived(message: Message) {
         }
 
         case "actions/force": {
-            setTimeout(() => {
-                sendAction(message.data.action_names[Math.floor(Math.random() * message.data.action_names.length)]);
-            }, 500);
+            const actionName: string = message.data.action_names[Math.floor(Math.random() * message.data.action_names.length)];
+            if (pendingResult === null) {
+                setTimeout(() => sendAction(actionName), 500);
+            } else {
+                console.warn("! Received new actions/force while waiting for result; sent to queue");
+                actionForceQueue.push(actionName);
+            }
             break;
         }
 
         case "action/result": {
-            setTimeout(() => {
-                if (message.data.id in pendingResults) {
-                    const actionName = pendingResults[message.data.id];
-                    delete pendingResults[message.data.id];
-                    if (!message.data.success) sendAction(actionName);
+            if (pendingResult === null) {
+                console.warn(`! Received unexpected action/result: '${message.data.id}'`);
+                break;
+            }
+
+            if (message.data.id === pendingResult.id) {
+                const actionName = pendingResult.actionName;
+                pendingResult = null;
+
+                if (!message.data.success) {
+                    setTimeout(() => sendAction(actionName), 500);
+                } else if (actionForceQueue.length > 0) {
+                    setTimeout(() => sendAction(actionForceQueue.shift()), 500);
                 }
-            }, 500);
+            } else {
+                console.warn(`! Received unknown action/result '${message.data.id}' while waiting for '${pendingResult.id}'`);
+            }
             break;
         }
     }
