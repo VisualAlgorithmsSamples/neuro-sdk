@@ -190,8 +190,10 @@ namespace NeuroSdk.Actions
         public void SetForce(float afterSeconds, string query, string? state, bool ephemeralContext = false)
             => SetForce(afterSeconds, () => query, () => state, ephemeralContext);
 
-        private void SendForce()
+        public void Force()
         {
+            if (CurrentState != State.Registered) return;
+
             CurrentState = State.Forced;
             _shouldForceFunc = null;
             WebsocketConnection.TrySend(new ActionsForce(_forceQueryGetter!(), _forceStateGetter!(), _forceEphemeralContext, _actions));
@@ -238,6 +240,17 @@ namespace NeuroSdk.Actions
             End();
         }
 
+        public void End()
+        {
+            if (CurrentState >= State.Ended) return;
+
+            NeuroActionHandler.UnregisterActions(_actions);
+            _shouldForceFunc = null;
+            _shouldEndFunc = null;
+            CurrentState = State.Ended;
+            Destroy(this);
+        }
+
         #endregion
 
         #region Handling
@@ -251,7 +264,7 @@ namespace NeuroSdk.Actions
             if (CurrentState >= State.Ended) throw new InvalidOperationException("Cannot handle a result after the ActionWindow has ended.");
 
             if (result.Successful) End();
-            // else if (CurrentState == State.Forced) SendForce(); // Vedal is now responsible for retrying forces
+            // else if (CurrentState == State.Forced) Force(); // Vedal is now responsible for retrying forces
 
             return result;
         }
@@ -262,22 +275,13 @@ namespace NeuroSdk.Actions
 
             if (_shouldForceFunc != null && _shouldForceFunc())
             {
-                SendForce();
+                Force();
             }
 
             if (_shouldEndFunc != null && _shouldEndFunc())
             {
                 End();
             }
-        }
-
-        private void End()
-        {
-            NeuroActionHandler.UnregisterActions(_actions);
-            _shouldForceFunc = null;
-            _shouldEndFunc = null;
-            CurrentState = State.Ended;
-            Destroy(this);
         }
 
         #endregion
