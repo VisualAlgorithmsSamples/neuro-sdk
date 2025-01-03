@@ -1,6 +1,6 @@
 # Neuro Godot SDK Usage
 
-There is an example of a Tic Tac Toe game implemented with the Neuro API, which you can find [here](./addons/neuro-sdk/examples/).
+There is an example of a Tic Tac Toe game implemented with the Neuro API, which you can find [here](./examples/).
 
 ## Sending Contexts
 
@@ -142,7 +142,7 @@ Each action window can register any number of actions, but only one of them will
 
 ### Code Sample
 
-This code is taken from the Tic Tac Toe example [here](./addons/neuro-sdk/examples/tic_tac_toe.gd).
+This code is taken from the Tic Tac Toe example [here](./examples/tic_tac_toe.gd).
 
 ```py
 func player_play_in_cell(cell: BaseButton) -> void:
