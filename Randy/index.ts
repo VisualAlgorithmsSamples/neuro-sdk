@@ -17,6 +17,8 @@ const wss = new WebSocketServer({port: 8000});
 
 let connections: WebSocket[] = [];
 let actions: Action[] = [];
+let pendingResult: { id: string; actionName: string } | null = null;
+let actionForceQueue: string[] = [];
 
 wss.on("connection", function connection(ws) {
     console.log("+ Connection opened");
@@ -29,6 +31,23 @@ wss.on("connection", function connection(ws) {
 
     send({command: "actions/reregister_all"});
 });
+
+function sendAction(actionName: string) {
+    const id = Math.random().toString();
+
+    if (actionName == "choose_name") {
+        send({command: "action", data: {id, name: "choose_name", data: JSON.stringify({name: "RANDY"})}});
+        return;
+    }
+
+    const action = actions.find(a => a.name === actionName);
+    if (!action) return;
+
+    const responseObj = !action?.schema ? undefined : JSON.stringify(JSONSchemaFaker.generate(action.schema));
+
+    send({command: "action", data: {id, name: action.name, data: responseObj}});
+    pendingResult = {id, actionName};
+}
 
 async function onMessageReceived(message: Message) {
     console.log("<---", util.inspect(message, false, null, true));
@@ -45,21 +64,34 @@ async function onMessageReceived(message: Message) {
         }
 
         case "actions/force": {
-            setTimeout(() => {
-                const actionName: string = message.data.action_names[Math.floor(Math.random() * message.data.action_names.length)];
+            const actionName: string = message.data.action_names[Math.floor(Math.random() * message.data.action_names.length)];
+            if (pendingResult === null) {
+                setTimeout(() => sendAction(actionName), 500);
+            } else {
+                console.warn("! Received new actions/force while waiting for result; sent to queue");
+                actionForceQueue.push(actionName);
+            }
+            break;
+        }
 
-                if (actionName == "choose_name") {
-                    send({command: "action", data: {id: Math.random().toString(), name: "choose_name", data: JSON.stringify({name: "RANDY"})}});
-                    return;
+        case "action/result": {
+            if (pendingResult === null) {
+                console.warn(`! Received unexpected action/result: '${message.data.id}'`);
+                break;
+            }
+
+            if (message.data.id === pendingResult.id) {
+                const actionName = pendingResult.actionName;
+                pendingResult = null;
+
+                if (!message.data.success) {
+                    setTimeout(() => sendAction(actionName), 500);
+                } else if (actionForceQueue.length > 0) {
+                    setTimeout(() => sendAction(actionForceQueue.shift()), 500);
                 }
-
-                const action = actions.find(a => a.name === actionName);
-                if (!action) return;
-
-                const responseObj = !action?.schema ? undefined : JSON.stringify(JSONSchemaFaker.generate(action.schema));
-
-                send({command: "action", data: {id: Math.random().toString(), name: action.name, data: responseObj}});
-            }, 500);
+            } else {
+                console.warn(`! Received unknown action/result '${message.data.id}' while waiting for '${pendingResult.id}'`);
+            }
             break;
         }
     }
