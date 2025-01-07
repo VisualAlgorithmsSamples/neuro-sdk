@@ -26,7 +26,7 @@ public class JudgeAction : NeuroAction<Button>
 {
     private readonly JudgeGame _judgeGame;
 
-    public JudgeAction(JudgeGame judgeGame) : base()
+    public JudgeAction(JudgeGame judgeGame)
     {
         _judgeGame = judgeGame;
     }
@@ -105,8 +105,7 @@ public void OnSceneChanged(string sceneName)
 // where LookAtAction is defined as
 public class LookAtAction: NeuroAction
 {
-    // This action is never part of an action window, so we use the parameterless base constructor
-    public LookAtAction() : base()
+    public LookAtAction()
     {
     }
 

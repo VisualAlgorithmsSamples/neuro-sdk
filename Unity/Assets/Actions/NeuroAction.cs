@@ -12,7 +12,10 @@ namespace NeuroSdk.Actions
     [PublicAPI]
     public abstract class NeuroAction : BaseNeuroAction
     {
-        protected NeuroAction() : base() { }
+        protected NeuroAction()
+        {
+        }
+
         protected NeuroAction(ActionWindow? actionWindow) : base(actionWindow)
         {
         }
@@ -37,7 +40,10 @@ namespace NeuroSdk.Actions
     [PublicAPI]
     public abstract class NeuroAction<TData> : BaseNeuroAction
     {
-        protected NeuroAction() : base() { }
+        protected NeuroAction()
+        {
+        }
+
         protected NeuroAction(ActionWindow? actionWindow) : base(actionWindow)
         {
         }

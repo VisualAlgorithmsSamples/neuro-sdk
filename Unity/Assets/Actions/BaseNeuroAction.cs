@@ -16,7 +16,9 @@ namespace NeuroSdk.Actions
         /// </summary>
         protected ActionWindow? ActionWindow;
 
-        protected BaseNeuroAction() : this(null) { }
+        protected BaseNeuroAction() : this(null)
+        {
+        }
 
         protected BaseNeuroAction(ActionWindow? actionWindow)
         {

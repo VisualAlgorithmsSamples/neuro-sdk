@@ -122,7 +122,7 @@ namespace NeuroSdk.Examples
     {
         private readonly TicTacToe _ticTacToe;
 
-        public PlayOAction(TicTacToe ticTacToe) : base()
+        public PlayOAction(TicTacToe ticTacToe)
         {
             _ticTacToe = ticTacToe;
         }
