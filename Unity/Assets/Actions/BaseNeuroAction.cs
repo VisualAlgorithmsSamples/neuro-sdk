@@ -56,7 +56,7 @@ namespace NeuroSdk.Actions
         protected abstract ExecutionResult Validate(ActionJData actionData, out object? parsedData);
         protected abstract UniTask ExecuteAsync(object? data);
 
-        public void SetActionWindow(ActionWindow actionWindow)
+        void INeuroAction.SetActionWindow(ActionWindow actionWindow)
         {
             if (ActionWindow != null)
             {

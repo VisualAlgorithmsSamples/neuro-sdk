@@ -132,11 +132,7 @@ namespace NeuroSdk.Actions
 
             if (action.ActionWindow != null)
             {
-                if (action.ActionWindow == this)
-                {
-                    Debug.LogError($"Action {action.Name} has already been added to this ActionWindow.");
-                }
-                else
+                if (action.ActionWindow != this)
                 {
                     Debug.LogError($"Cannot add action {action.Name} to this ActionWindow because it is already included in another ActionWindow.");
                 }

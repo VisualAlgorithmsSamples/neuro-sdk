@@ -23,6 +23,9 @@ namespace NeuroSdk.Actions
 
         WsAction GetWsAction();
 
+        /// <summary>
+        /// Sets the active action window for this action. This will be called by the SDK and should not be used manually!
+        /// </summary>
         void SetActionWindow(ActionWindow actionWindow);
     }
 }
