@@ -1,15 +1,12 @@
 ﻿#nullable enable
 
-using JetBrains.Annotations;
-
 namespace NeuroSdk.Utilities
 {
-    [PublicAPI]
-    public sealed class FormatString
+    internal sealed class FormatString
     {
         private readonly string _str;
 
-        public FormatString(string str)
+        private FormatString(string str)
         {
             _str = str;
         }
