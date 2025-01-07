@@ -31,6 +31,11 @@ namespace NeuroSdk.Actions
         protected abstract string Description { get; }
         protected abstract JsonSchema? Schema { get; }
 
+        /// <summary>
+        /// This is ONLY checked when the action is added to an ActionWindow, if it returns false the action won't be added.
+        /// </summary>
+        public virtual bool CanAddToActionWindow(ActionWindow actionWindow) => true;
+
         ExecutionResult INeuroAction.Validate(ActionJData actionData, out object? parsedData)
         {
             ExecutionResult result = Validate(actionData, out parsedData);
@@ -55,7 +60,7 @@ namespace NeuroSdk.Actions
 
         public void SetActionWindow(ActionWindow actionWindow)
         {
-            if (!((INeuroAction) this).CanAddToActionWindow(actionWindow))
+            if (ActionWindow != null && !ReferenceEquals(ActionWindow, actionWindow))
             {
                 Debug.LogError("Cannot set the action window for this action.");
                 return;

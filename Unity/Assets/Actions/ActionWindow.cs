@@ -129,14 +129,14 @@ namespace NeuroSdk.Actions
         {
             if (!ValidateFrozen()) return this;
 
-            if (action.CanAddToActionWindow(this))
+            if (action.CanAddToActionWindow(this) && (action.ActionWindow == null || ReferenceEquals(action.ActionWindow, this)))
             {
                 action.SetActionWindow(this);
                 _actions.Add(action);
             }
-            else
+            else if(action.ActionWindow != null && !ReferenceEquals(action.ActionWindow, this))
             {
-                Debug.LogError("Cannot add this action to this ActionWindow.");
+                Debug.LogError("Cannot add this action to this ActionWindow because it is already assigned to another ActionWindow.");
             }
 
             return this;
