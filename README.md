@@ -8,7 +8,7 @@ There are also official SDKs available for Unity and Godot, as well as community
 
 Significant API and SDK changes will be documented in the [CHANGELOG.md](./CHANGELOG.md) file.
 
-Last update: 26th of December 2024, 19:00 GMT
+Last update: 7th of January 2025, 12:20 GMT
 
 ## Contents
 
@@ -47,28 +47,30 @@ Since you need to describe the entire game state in text, and receive actions in
 <details>
 <summary>Examples</summary>
 
-- Inscryption? yes
-- Liar's Bar? yes
-- Buckshot Roulette? yes
-- Among Us? not easily
-- Skyrim? no
-- League of Legends? no (ew)
-- Celeste? no
-- KTANE? yes
-- Uno? YES
-- Monopoly? YES
-- Euro Truck Sim? no
-- CSGO? no
-- Almost any visual novel ====> YES
-- Almost any card game ====> YES
-- Any RTS ====> not easily
-- Most FPP ====> NO
-- Shooters ====> NO
-- Platformers ====> NO
-- Tic tac toe? yes
+Games that could work
+- Inscryption
+- Liar's Bar
+- Buckshot Roulette
+- Keep Talking and Nobody Explodes
+- Uno
+- Monopoly
+- Most visual novels
+- Most card games
+
+Games that would not work
+
+- Among Us
+- Skyrim
+- League of Legends
+- Celeste
+- Euro Truck Sim
+- CSGO
+- Any real-time strategy game
+- Shooters
+- Platformers
 
 You get the idea. Turn based games in general are perfect for this. Anything else and you're kinda stretching the limits of what the API can do.
 
-Vedal said you can use this for more complex games but he told me "you wouldn't get it" so you lot probably wouldn't get it either.
+Vedal said you can use this for more complex games but he told me "you wouldn't get it" so I'm not even going to try to imagine how this would even work, and I am just going to assume that he is wrong.
 
 </details>
