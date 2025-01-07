@@ -23,7 +23,14 @@ let actionForceQueue: string[] = [];
 wss.on("connection", function connection(ws) {
     console.log("+ Connection opened");
     connections.push(ws);
-    ws.on("message", data => onMessageReceived(JSON.parse(data.toString()) as Message));
+    ws.on("message", data => {
+		try {
+			onMessageReceived(JSON.parse(data.toString()) as Message);
+		} catch {
+			console.error("Caught exception trying to parse message: ");
+			console.error(data.toString());
+		}
+	});
     ws.on("close", () => {
         console.log("- Connection closed");
         connections = connections.filter(c => c != ws);
@@ -46,7 +53,6 @@ function sendAction(actionName: string) {
     const responseObj = !action?.schema ? undefined : JSON.stringify(JSONSchemaFaker.generate(action.schema));
 
     send({command: "action", data: {id, name: action.name, data: responseObj}});
-    pendingResult = {id, actionName};
 }
 
 async function onMessageReceived(message: Message) {
@@ -98,6 +104,10 @@ async function onMessageReceived(message: Message) {
 }
 
 export function send(msg: Message) {
+	if (msg.command === "action") {
+		pendingResult = {id: msg.data.id, actionName: msg.data.name};
+	}
+	
     console.log("--->", util.inspect(msg, false, null, true));
 
     const msgStr = JSON.stringify(msg);

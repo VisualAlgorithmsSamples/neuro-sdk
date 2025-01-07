@@ -44,13 +44,7 @@ Call `NeuroSdkSetup.Initialize` with the name of the game that you are using. Th
 ### WebGL Additional Setup
 
 1. Go to `Project Settings > Player` and set `Compression Format` to `Gzip` and enable `Decompression Fallback`.
-2. Do one of the following:
-    - Bundle your build along with a web server that can query the `NEURO_SDK_WS_URL` environment variable via a GET request to `/$env/NEURO_SDK_WS_URL` [(Superbox's Web Bundler)](https://github.com/Superbox2147/simple-http-server). 
-    - Specify the `WebSocketURL` URL parameter (ex. `http://localhost:8080?WebSocketURL=ws://localhost:8000`)
-
-> [!Note]  
-> If you are building in WebGL and want to use the Neuro SDK, your application cannot be run on itch.io or other websites which embed it, instead it needs to be manually run on localhost.  
-> As such, it is technically not a "browser game" anymore, so you might as well build it normally.
+2. When running, use a script such as [this one](../Web%20Game%20Runner) that serves the `NEURO_SDK_WS_URL` variable at the `/$env/NEURO_SDK_WS_URL` path.
 
 ### Usage
 
