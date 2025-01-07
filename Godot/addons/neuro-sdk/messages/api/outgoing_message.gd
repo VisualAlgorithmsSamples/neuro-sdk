@@ -4,8 +4,9 @@ func _get_command() -> String:
 	push_error("OutgoingMessage._get_command() is not implemented.")
 	return "invalid"
 
-func _get_data() -> Dictionary:
-	return {}
+# Returns Dictionary | null
+func _get_data():
+	return null
 
 func merge(_other: OutgoingMessage) -> bool:
 	return false

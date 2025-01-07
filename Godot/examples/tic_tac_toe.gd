@@ -1,6 +1,6 @@
 extends Node
 
-const PlayOAction := preload("res://addons/neuro-sdk/examples/play_o_action.gd")
+const PlayOAction := preload("res://examples/play_o_action.gd")
 
 @export var resetButton: BaseButton
 @export var container: GridContainer

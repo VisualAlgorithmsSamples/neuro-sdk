@@ -1,6 +1,6 @@
 extends NeuroAction
 
-const TicTacToe := preload("res://addons/neuro-sdk/examples/tic_tac_toe.gd")
+const TicTacToe := preload("res://examples/tic_tac_toe.gd")
 
 var _ticTacToe: TicTacToe
 
