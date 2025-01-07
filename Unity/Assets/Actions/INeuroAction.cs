@@ -11,10 +11,12 @@ namespace NeuroSdk.Actions
     {
         string Name { get; }
 
+        ActionWindow? ActionWindow { get; }
+
         /// <summary>
         /// This is ONLY checked when the action is added to an ActionWindow, if it returns false the action won't be added.
         /// </summary>
-        bool CanAddToActionWindow(ActionWindow actionWindow);
+        sealed bool CanAddToActionWindow(ActionWindow actionWindow) => ActionWindow == null || ReferenceEquals(ActionWindow, actionWindow);
 
         ExecutionResult Validate(ActionJData actionData, out object? data);
         UniTask ExecuteAsync(object? data);

@@ -14,12 +14,14 @@ namespace NeuroSdk.Actions
         /// <summary>
         /// The value that was passed to the actionWindow parameter in the constructor
         /// </summary>
-        protected ActionWindow? ActionWindow;
+        public ActionWindow? ActionWindow { get; private set; } // getter is from INeuroAction
 
-        protected BaseNeuroAction() : this(null)
+        protected BaseNeuroAction()
         {
+            ActionWindow = null;
         }
 
+        [System.Obsolete("This way of setting the action window is obsolete. Please use the parameterless constructor instead.")]
         protected BaseNeuroAction(ActionWindow? actionWindow)
         {
             ActionWindow = actionWindow;
@@ -28,8 +30,6 @@ namespace NeuroSdk.Actions
         public abstract string Name { get; }
         protected abstract string Description { get; }
         protected abstract JsonSchema? Schema { get; }
-
-        public virtual bool CanAddToActionWindow(ActionWindow actionWindow) => ActionWindow == null || ReferenceEquals(ActionWindow, actionWindow);
 
         ExecutionResult INeuroAction.Validate(ActionJData actionData, out object? parsedData)
         {
@@ -55,7 +55,7 @@ namespace NeuroSdk.Actions
 
         public void SetActionWindow(ActionWindow actionWindow)
         {
-            if (!CanAddToActionWindow(actionWindow))
+            if (!((INeuroAction) this).CanAddToActionWindow(actionWindow))
             {
                 Debug.LogError("Cannot set the action window for this action.");
                 return;
