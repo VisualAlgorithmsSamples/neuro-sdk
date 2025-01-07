@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using NeuroSdk.Messages.Outgoing;
 using NeuroSdk.Websocket;
@@ -104,12 +105,15 @@ namespace NeuroSdk.Actions
         /// <summary>
         /// Set a context message to be sent alongside the action register.
         /// </summary>
-        public void SetContext(string message, bool silent = false)
+        /// <returns>The <see cref="ActionWindow"/> itself for chaining.</returns>
+        public ActionWindow SetContext(string message, bool silent = false)
         {
-            if (!ValidateFrozen()) return;
+            if (!ValidateFrozen()) return this;
 
             _contextMessage = message;
             _contextSilent = silent;
+
+            return this;
         }
 
         #endregion
@@ -121,11 +125,37 @@ namespace NeuroSdk.Actions
         /// <summary>
         /// Add a new action to the list of possible actions that Neuro can pick from
         /// </summary>
-        public void AddAction(INeuroAction action)
+        /// <returns>The <see cref="ActionWindow"/> itself for chaining.</returns>
+        public ActionWindow AddAction(INeuroAction action)
         {
-            if (!ValidateFrozen()) return;
+            if (!ValidateFrozen()) return this;
 
-            if (action.CanBeUsed()) _actions.Add(action);
+            if (action.ActionWindow != null)
+            {
+                if (action.ActionWindow == this)
+                {
+                    Debug.LogError($"Action {action.Name} has already been added to this ActionWindow.");
+                }
+                else
+                {
+                    Debug.LogError($"Cannot add action {action.Name} to this ActionWindow because it is already included in another ActionWindow.");
+                }
+
+                return this;
+            }
+
+            if (!action.CanAddToActionWindow(this)) return this;
+
+            if (_actions.Any(a => a.Name == action.Name))
+            {
+                Debug.LogError($"Cannot add two actions with the same name to the same ActionWindow. Triggered by {action.Name}");
+                return this;
+            }
+
+            action.SetActionWindow(this);
+            _actions.Add(action);
+
+            return this;
         }
 
         #endregion
@@ -144,14 +174,17 @@ namespace NeuroSdk.Actions
         /// <param name="queryGetter">A getter for the query of the action force, invoked at force-time.</param>
         /// <param name="stateGetter">A getter for the state of the action force, invoked at force-time.</param>
         /// <param name="ephemeralContext">If true, the query and state won't be remembered after the action force is finished.</param>
-        public void SetForce(Func<bool> shouldForce, Func<string> queryGetter, Func<string?> stateGetter, bool ephemeralContext = false)
+        /// <returns>The <see cref="ActionWindow"/> itself for chaining.</returns>
+        public ActionWindow SetForce(Func<bool> shouldForce, Func<string> queryGetter, Func<string?> stateGetter, bool ephemeralContext = false)
         {
-            if (!ValidateFrozen()) return;
+            if (!ValidateFrozen()) return this;
 
             _shouldForceFunc = shouldForce;
             _forceQueryGetter = queryGetter;
             _forceStateGetter = stateGetter;
             _forceEphemeralContext = ephemeralContext;
+
+            return this;
         }
 
         /// <summary>
@@ -159,7 +192,8 @@ namespace NeuroSdk.Actions
         /// </summary>
         /// <param name="shouldForce">When this returns true, the actions will be forced.</param>
         /// <param name="ephemeralContext">If true, the query and state won't be remembered after the action force is finished.</param>
-        public void SetForce(Func<bool> shouldForce, string query, string? state, bool ephemeralContext = false)
+        /// <returns>The <see cref="ActionWindow"/> itself for chaining.</returns>
+        public ActionWindow SetForce(Func<bool> shouldForce, string query, string? state, bool ephemeralContext = false)
             => SetForce(shouldForce, () => query, () => state, ephemeralContext);
 
         /// <summary>
@@ -168,12 +202,12 @@ namespace NeuroSdk.Actions
         /// <param name="queryGetter">A getter for the query of the action force, invoked at force-time.</param>
         /// <param name="stateGetter">A getter for the state of the action force, invoked at force-time.</param>
         /// <param name="ephemeralContext">If true, the query and state won't be remembered after the action force is finished.</param>
-        public void SetForce(float afterSeconds, Func<string> queryGetter, Func<string?> stateGetter, bool ephemeralContext = false)
+        /// <returns>The <see cref="ActionWindow"/> itself for chaining.</returns>
+        public ActionWindow SetForce(float afterSeconds, Func<string> queryGetter, Func<string?> stateGetter, bool ephemeralContext = false)
         {
             float time = afterSeconds;
 
-            SetForce(shouldForce, queryGetter, stateGetter, ephemeralContext);
-            return;
+            return SetForce(shouldForce, queryGetter, stateGetter, ephemeralContext);
 
             bool shouldForce()
             {
@@ -187,7 +221,8 @@ namespace NeuroSdk.Actions
         /// Specify a time in seconds after which the actions should be forced.
         /// </summary>
         /// <param name="ephemeralContext">If true, the query and state won't be remembered after the action force is finished.</param>
-        public void SetForce(float afterSeconds, string query, string? state, bool ephemeralContext = false)
+        /// <returns>The <see cref="ActionWindow"/> itself for chaining.</returns>
+        public ActionWindow SetForce(float afterSeconds, string query, string? state, bool ephemeralContext = false)
             => SetForce(afterSeconds, () => query, () => state, ephemeralContext);
 
         public void Force()
@@ -209,22 +244,25 @@ namespace NeuroSdk.Actions
         /// Specify a condition under which the actions should be unregistered and this window closed.
         /// </summary>
         /// <param name="shouldEnd">When this returns true, the actions will be unregistered.</param>
-        public void SetEnd(Func<bool> shouldEnd)
+        /// <returns>The <see cref="ActionWindow"/> itself for chaining.</returns>
+        public ActionWindow SetEnd(Func<bool> shouldEnd)
         {
-            if (!ValidateFrozen()) return;
+            if (!ValidateFrozen()) return this;
 
             _shouldEndFunc = shouldEnd;
+
+            return this;
         }
 
         /// <summary>
         /// Specify a time in seconds after which the actions should be unregistered and this window closed.
         /// </summary>
-        public void SetEnd(float afterSeconds)
+        /// <returns>The <see cref="ActionWindow"/> itself for chaining.</returns>
+        public ActionWindow SetEnd(float afterSeconds)
         {
             float time = afterSeconds;
 
-            SetEnd(shouldEnd);
-            return;
+            return SetEnd(shouldEnd);
 
             bool shouldEnd()
             {

@@ -11,14 +11,18 @@ namespace NeuroSdk.Actions
     {
         string Name { get; }
 
+        ActionWindow? ActionWindow { get; }
+
         /// <summary>
-        /// This is ONLY checked when the action is added to an ActionWindow, if it returns false the action won't be added.
+        /// If this returns false, the action won't be added to the action window.
         /// </summary>
-        bool CanBeUsed();
+        bool CanAddToActionWindow(ActionWindow actionWindow);
 
         ExecutionResult Validate(ActionJData actionData, out object? data);
         UniTask ExecuteAsync(object? data);
 
         WsAction GetWsAction();
+
+        void SetActionWindow(ActionWindow actionWindow);
     }
 }
