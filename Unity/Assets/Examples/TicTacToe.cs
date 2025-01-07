@@ -38,10 +38,10 @@ namespace NeuroSdk.Examples
 
             if (!CheckWin())
             {
-                ActionWindow actionWindow = ActionWindow.Create(gameObject);
-                actionWindow.SetForce(0, "It is your turn. Please place an O.", "", false);
-                actionWindow.AddAction(new PlayOAction(actionWindow, this));
-                actionWindow.Register();
+                ActionWindow.Create(gameObject)
+                    .SetForce(0, "It is your turn. Please place an O.", "", false)
+                    .AddAction(new PlayOAction(this))
+                    .Register();
             }
             else
             {
@@ -122,7 +122,7 @@ namespace NeuroSdk.Examples
     {
         private readonly TicTacToe _ticTacToe;
 
-        public PlayOAction(ActionWindow window, TicTacToe ticTacToe) : base(window)
+        public PlayOAction(TicTacToe ticTacToe) : base()
         {
             _ticTacToe = ticTacToe;
         }
