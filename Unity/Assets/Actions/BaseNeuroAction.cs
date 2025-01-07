@@ -12,7 +12,7 @@ namespace NeuroSdk.Actions
     public abstract class BaseNeuroAction : INeuroAction
     {
         /// <summary>
-        /// The value that was passed to the actionWindow parameter in the constructor
+        /// The value that was set by the <see cref="SetActionWindow"/> method.
         /// </summary>
         public ActionWindow? ActionWindow { get; private set; } // getter is from INeuroAction
 
