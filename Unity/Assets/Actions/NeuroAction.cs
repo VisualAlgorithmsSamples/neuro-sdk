@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using System;
 using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
 using NeuroSdk.Websocket;
@@ -16,7 +17,7 @@ namespace NeuroSdk.Actions
         {
         }
 
-        [System.Obsolete("This way of setting the action window is obsolete. Please use the parameterless constructor instead.")]
+        [Obsolete("Setting the action window is now handled by the Neuro SDK. Please use the parameterless constructor instead.")]
         protected NeuroAction(ActionWindow? actionWindow) : base(actionWindow)
         {
         }
@@ -45,7 +46,7 @@ namespace NeuroSdk.Actions
         {
         }
 
-        [System.Obsolete("This way of setting the action window is obsolete. Please use the parameterless constructor instead.")]
+        [Obsolete("This way of setting the action window is obsolete. Please use the parameterless constructor instead.")]
         protected NeuroAction(ActionWindow? actionWindow) : base(actionWindow)
         {
         }
@@ -75,7 +76,7 @@ namespace NeuroSdk.Actions
         {
         }
 
-        [System.Obsolete("This way of setting the action window is obsolete. Please use the parameterless constructor instead.")]
+        [Obsolete("Setting the action window is now handled by the Neuro SDK. Please use the parameterless constructor instead.")]
         protected NeuroActionS(ActionWindow? actionWindow) : base(actionWindow)
         {
         }

@@ -13,6 +13,9 @@ namespace NeuroSdk.Actions
 
         ActionWindow? ActionWindow { get; }
 
+        /// <summary>
+        /// If this returns false, the action won't be added to the action window.
+        /// </summary>
         bool CanAddToActionWindow(ActionWindow actionWindow);
 
         ExecutionResult Validate(ActionJData actionData, out object? data);
@@ -20,6 +23,6 @@ namespace NeuroSdk.Actions
 
         WsAction GetWsAction();
 
-        public void SetActionWindow(ActionWindow actionWindow);
+        void SetActionWindow(ActionWindow actionWindow);
     }
 }

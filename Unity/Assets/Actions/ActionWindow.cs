@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using NeuroSdk.Messages.Outgoing;
 using NeuroSdk.Websocket;
@@ -129,15 +130,30 @@ namespace NeuroSdk.Actions
         {
             if (!ValidateFrozen()) return this;
 
-            if (action.CanAddToActionWindow(this) && (action.ActionWindow == null || ReferenceEquals(action.ActionWindow, this)))
+            if (action.ActionWindow != null)
             {
-                action.SetActionWindow(this);
-                _actions.Add(action);
+                if (action.ActionWindow == this)
+                {
+                    Debug.LogError($"Action {action.Name} has already been added to this ActionWindow.");
+                }
+                else
+                {
+                    Debug.LogError($"Cannot add action {action.Name} to this ActionWindow because it is already included in another ActionWindow.");
+                }
+
+                return this;
             }
-            else if(action.ActionWindow != null && !ReferenceEquals(action.ActionWindow, this))
+
+            if (!action.CanAddToActionWindow(this)) return this;
+
+            if (_actions.Any(a => a.Name == action.Name))
             {
-                Debug.LogError("Cannot add this action to this ActionWindow because it is already assigned to another ActionWindow.");
+                Debug.LogError($"Cannot add two actions with the same name to the same ActionWindow. Triggered by {action.Name}");
+                return this;
             }
+
+            action.SetActionWindow(this);
+            _actions.Add(action);
 
             return this;
         }

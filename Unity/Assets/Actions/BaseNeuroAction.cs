@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using System;
 using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
 using NeuroSdk.Json;
@@ -12,16 +13,16 @@ namespace NeuroSdk.Actions
     public abstract class BaseNeuroAction : INeuroAction
     {
         /// <summary>
-        /// The value that was set by the <see cref="SetActionWindow"/> method.
+        /// Current action window that this action is a part of.
         /// </summary>
-        public ActionWindow? ActionWindow { get; private set; } // getter is from INeuroAction
+        public ActionWindow? ActionWindow { get; private set; }
 
         protected BaseNeuroAction()
         {
             ActionWindow = null;
         }
 
-        [System.Obsolete("This way of setting the action window is obsolete. Please use the parameterless constructor instead.")]
+        [Obsolete("Setting the action window is now handled by the Neuro SDK. Please use the parameterless constructor instead.")]
         protected BaseNeuroAction(ActionWindow? actionWindow)
         {
             ActionWindow = actionWindow;
@@ -31,9 +32,6 @@ namespace NeuroSdk.Actions
         protected abstract string Description { get; }
         protected abstract JsonSchema? Schema { get; }
 
-        /// <summary>
-        /// This is ONLY checked when the action is added to an ActionWindow, if it returns false the action won't be added.
-        /// </summary>
         public virtual bool CanAddToActionWindow(ActionWindow actionWindow) => true;
 
         ExecutionResult INeuroAction.Validate(ActionJData actionData, out object? parsedData)
@@ -60,11 +58,16 @@ namespace NeuroSdk.Actions
 
         public void SetActionWindow(ActionWindow actionWindow)
         {
-            if (ActionWindow != null && !ReferenceEquals(ActionWindow, actionWindow))
+            if (ActionWindow != null)
             {
-                Debug.LogError("Cannot set the action window for this action.");
+                if (ActionWindow != actionWindow)
+                {
+                    Debug.LogError("Cannot set the action window for this action, it is already set.");
+                }
+
                 return;
             }
+
             ActionWindow = actionWindow;
         }
     }
