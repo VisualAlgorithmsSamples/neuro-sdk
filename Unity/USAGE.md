@@ -12,8 +12,6 @@ In order to create a custom action, you can extend either the `NeuroAction` or `
 
 You will need to implement the `Name`, `Description` and `Schema` of the action that you are creating, as well as a `Validate` and `ExecuteAsync` method.
 
-If your action is not going to be used in an `ActionWindow`, you can pass `null` to that parameter in the base constructor. Otherwise, you should take in an `ActionWindow` parameter in your own constructor, and pass that down.
-
 The `Validate` method should validate the incoming data from json, and make sure that it's correct, and it should also perform any kind of initial verifications and finding objects. For example, in Inscryption, checking that the card that Neuro is trying to play is valid, and that there is enough bones for it, as well as finding the actual Card object and saving that as state. At the end you should return either `ExecutionResult.Success()` or `ExecutionResult.Failure(string message)`. 
 
 In order to pass state or context between the `Validate` and `ExecuteAsync` methods, you can use the `parsedData` out parameter. This will be passed to the `ExecuteAsync` method when it is called. The type of the `parsedData` parameter is the type parameter of the `NeuroAction<T>` class. If you have no context to pass, you can use the class without the generic type parameter.
@@ -28,8 +26,7 @@ public class JudgeAction : NeuroAction<Button>
 {
     private readonly JudgeGame _judgeGame;
 
-    // This action will always be part of an action window, so we pass that as a parameter
-    public JudgeAction(ActionWindow window, JudgeGame judgeGame) : base(window)
+    public JudgeAction(JudgeGame judgeGame) : base()
     {
         _judgeGame = judgeGame;
     }
@@ -108,8 +105,8 @@ public void OnSceneChanged(string sceneName)
 // where LookAtAction is defined as
 public class LookAtAction: NeuroAction
 {
-    // This action is never part of an action window, so we pass down null
-    public LookAtAction() : base(null)
+    // This action is never part of an action window, so we use the parameterless base constructor
+    public LookAtAction() : base()
     {
     }
 
@@ -125,6 +122,9 @@ Create an instance using `static ActionWindow ActionWindow.Create(GameObject par
 
 After you have finished setting up your action window, you can call `void ActionWindow.Register()` to register it with Neuro. This will make it immutable and register all of the actions over the websocket.
 
+The methods of the `ActionWindow` class are designed to be used with method chaining.
+`Register()` terminates the chain, as calling any methods on the action window after that would result in an error.
+
 An `ActionWindow` can be in one of 4 possible states:
 - `Building`: This window has just been created and is currently being setup.
 - `Registered`: This window has been registered and is now immutable and waiting for a response.
@@ -137,15 +137,15 @@ An `ActionWindow` can be in one of 4 possible states:
 
 ### Adding a Context
 
-If you want to add a context message to an action window, you can use the method `void ActionWindow.SetContext(string message, bool silent)`. This will send the context message when the window is registered. Use this to pass in state relevant to the available actions.
+If you want to add a context message to an action window, you can use the method `ActionWindow ActionWindow.SetContext(string message, bool silent)`. This will send the context message when the window is registered. Use this to pass in state relevant to the available actions.
 
 ### Forcing
 
-If you want the action window to be forced (i.e. Neuro must perform an action as soon as she can), you can use one of the methods `void ActionWindow.SetForce(...)`. This allows you to pass in various parameters that dictate when the action force for the window should be sent.
+If you want the action window to be forced (i.e. Neuro must perform an action as soon as she can), you can use one of the methods `ActionWindow ActionWindow.SetForce(...)`. This allows you to pass in various parameters that dictate when the action force for the window should be sent.
 
 ### Ending
 
-If you want the action window to end programmatically, you can call one of the `void ActionWindow.SetEnd(...)` methods to describe when that should happen.
+If you want the action window to end programmatically, you can call one of the `ActionWindow ActionWindow.SetEnd(...)` methods to describe when that should happen.
 
 When an action window is ended, all of the actions that were registered with it are unregistered automatically.
 
@@ -153,7 +153,7 @@ An action window will be automatically ended when an action is received and is e
 
 ### Adding Actions
 
-Using the `void ActionWindow.AddAction(INeuroAction action)` method, you can add an action to the window. This will add this action as one of the possible responses that Neuro can pick from.
+Using the `ActionWindow ActionWindow.AddAction(INeuroAction action)` method, you can add an action to the window. This will add this action as one of the possible responses that Neuro can pick from.
 
 Each action window can register any number of actions, but only one of them will be returned by Neuro. This just asks Neuro to pick one of them basically.
 
@@ -174,11 +174,11 @@ public void PlayerPlayInCell(GameObject cell)
 
     if (!CheckWin())
     {
-        ActionWindow actionWindow = ActionWindow.Create(gameObject);
-        // 0 seconds forces the action immediately
-        actionWindow.SetForce(0, "It is your turn. Please place an O.", "", false);
-        actionWindow.AddAction(new PlayOAction(actionWindow, this));
-        actionWindow.Register();
+        ActionWindow.Create(gameObject);
+            // 0 seconds forces the action immediately
+            .SetForce(0, "It is your turn. Please place an O.", "", false);
+            .AddAction(new PlayOAction(this));
+            .Register();
     }
     else
     {
