@@ -9,7 +9,7 @@ namespace NeuroSdk.Messages.API
     {
         protected abstract string Command { get; }
 
-        protected virtual object Data => this;
+        protected virtual object? Data => this;
 
         public virtual bool Merge(OutgoingMessageBuilder other) => false;
 

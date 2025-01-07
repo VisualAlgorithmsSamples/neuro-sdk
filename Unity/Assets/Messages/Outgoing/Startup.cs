@@ -9,6 +9,6 @@ namespace NeuroSdk.Messages.Outgoing
     public sealed class Startup : OutgoingMessageBuilder
     {
         protected override string Command => "startup";
-        protected override object Data => null;
+        protected override object? Data => null;
     }
 }
