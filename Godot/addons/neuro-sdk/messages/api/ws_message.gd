@@ -1,19 +1,22 @@
 class_name WsMessage
 
+
 var command: String
-var data
+var data: Dictionary
 var game: String
 
-func _init(command_: String, data_, game_: String):
-	command = command_
-	data = data_
-	game = game_
+
+func _init(_command: String, _data: Dictionary, _game: String):
+	command = _command
+	data = _data
+	game = _game
+
 
 func get_data() -> Dictionary:
-	if data == null:
+	if data.is_empty():
 		return {
 			"command": command,
-			"game": game,
+			"game": game
 		}
 
 	return {
