@@ -38,7 +38,7 @@ func _process(delta) -> void:
 			_ws_reconnect()
 
 func _ws_start() -> void:
-	push_warning("Initializing Websocket connection")
+	print("Initializing Websocket connection")
 
 	if _socket != null:
 		var state: int = _socket.get_ready_state();
