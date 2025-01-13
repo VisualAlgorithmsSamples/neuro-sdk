@@ -17,7 +17,7 @@ boot_splash/bg_color=Color(0, 0, 0, 1)
 
 [autoload]
 
-neuro_sdk="*res://addons/neuro-sdk/neuro_sdk.tscn"
+Websocket="*res://addons/neuro-sdk/neuro_sdk.tscn"
 
 [debug]
 
