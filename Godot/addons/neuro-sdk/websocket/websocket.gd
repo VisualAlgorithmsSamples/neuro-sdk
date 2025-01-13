@@ -1,20 +1,30 @@
-class_name Websocket
 extends Node
 
+
+signal connected
+signal connection_failed(reason: String)
+signal disconnected(code: int)
+
 const POLL_INTERVAL := 1.0 / 30.0
-static var _socket: WebSocketPeer
-static var _message_queue := MessageQueue.new()
-static var _command_handler: CommandHandler
+const RECONNECT_INTERVAL := 3.0
+
+var _socket: WebSocketPeer
+var _message_queue := MessageQueue.new()
+var _command_handler: CommandHandler
+
 var _elapsed_time := 0.0
 
-func _init() -> void:
+
+func _enter_tree() -> void:
 	_command_handler = CommandHandler.new()
 	self.add_child(_command_handler)
-	_command_handler.name = "Command Handler"
+	_command_handler.name = &'CommandHandler'
 	_command_handler.register_all()
+
 
 func _ready() -> void:
 	_ws_start()
+
 
 func _process(delta) -> void:
 	if _socket == null:
@@ -35,7 +45,9 @@ func _process(delta) -> void:
 		WebSocketPeer.STATE_CLOSED:
 			var code: int = _socket.get_close_code()
 			push_warning("Websocket closed with code: %d" % [code])
+			disconnected.emit(code)
 			_ws_reconnect()
+
 
 func _ws_start() -> void:
 	print("Initializing Websocket connection")
@@ -56,10 +68,17 @@ func _ws_start() -> void:
 		push_warning("Could not connect to websocket, error code %d" % [err])
 		_ws_reconnect()
 
+		connection_failed.emit(err)
+		return
+
+	connected.emit()
+
+
 func _ws_reconnect() -> void:
 	_socket = null
-	await get_tree().create_timer(3).timeout
+	await get_tree().create_timer(RECONNECT_INTERVAL).timeout
 	_ws_start()
+
 
 func _ws_read() -> void:
 	while _socket.get_available_packet_count():
@@ -85,21 +104,26 @@ func _ws_read() -> void:
 		var data := message.get_object("data", {})
 		_command_handler.handle(command, data)
 
+
 func _ws_write() -> void:
 	while _message_queue.size() > 0:
 		var message: OutgoingMessage = _message_queue.dequeue()
 		Websocket._send_internal(message.get_ws_message())
 
-static func send(message: OutgoingMessage) -> void:
+
+func send(message: OutgoingMessage) -> void:
 	_message_queue.enqueue(message)
 
-static func send_immediate(message: OutgoingMessage) -> void:
+
+func send_immediate(message: OutgoingMessage) -> void:
 	if _socket == null or _socket.get_ready_state() != WebSocketPeer.STATE_OPEN:
 		push_error("Cannot send immediate message, websocket is not connected")
 		return
+
 	_send_internal(message.get_ws_message())
 
-static func _send_internal(message: WsMessage) -> void:
+
+func _send_internal(message: WsMessage) -> void:
 	var messageStr: String = JSON.stringify(message.get_data(), "  ", false)
 
 	var err: int = _socket.send_text(messageStr)

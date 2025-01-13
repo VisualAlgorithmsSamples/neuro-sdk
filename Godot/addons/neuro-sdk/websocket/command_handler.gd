@@ -20,7 +20,7 @@ func register_all() -> void:
 			var script = load(script_path)
 			if script:
 				var node = script.new()
-				node.name = file_name
+				node.name = file_name.get_file().get_basename().to_pascal_case()
 				add_child(node)
 				handlers.append(node)
 				print("Added websocket message node: %s" % [script_path])
