@@ -21,7 +21,7 @@ namespace NeuroSdk.Actions
 
         private void OnApplicationQuit()
         {
-            WebsocketConnection.TrySendImmediate(new ActionsUnregister(_currentlyRegisteredActions));
+            WebsocketConnection.Instance!.SendImmediate(new ActionsUnregister(_currentlyRegisteredActions));
             _currentlyRegisteredActions = null!;
         }
 
@@ -30,7 +30,7 @@ namespace NeuroSdk.Actions
             _currentlyRegisteredActions.RemoveAll(oldAction => newActions.Any(newAction => oldAction.Name == newAction.Name));
             _dyingActions.RemoveAll(oldAction => newActions.Any(newAction => oldAction.Name == newAction.Name));
             _currentlyRegisteredActions.AddRange(newActions);
-            WebsocketConnection.TrySend(new ActionsRegister(newActions));
+            WebsocketConnection.Instance!.Send(new ActionsRegister(newActions));
         }
 
         public static void RegisterActions(params INeuroAction[] newActions)
@@ -44,7 +44,7 @@ namespace NeuroSdk.Actions
             _dyingActions.AddRange(actionsToRemove);
             removeActions().Forget();
 
-            WebsocketConnection.TrySend(new ActionsUnregister(removeActionsList));
+            WebsocketConnection.Instance!.Send(new ActionsUnregister(removeActionsList));
 
             return;
 

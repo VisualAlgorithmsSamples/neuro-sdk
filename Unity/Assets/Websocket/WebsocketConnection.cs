@@ -9,20 +9,37 @@ using NeuroSdk.Messages.API;
 using NeuroSdk.Utilities;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Networking;
+using UnityEngine.Serialization;
 
 namespace NeuroSdk.Websocket
 {
     [PublicAPI]
     public sealed class WebsocketConnection : MonoBehaviour
     {
-        public static WebsocketConnection? Instance { get; private set; }
+        private const float RECONNECT_INTERVAL = 3;
+
+        private static WebsocketConnection? _instance;
+        public static WebsocketConnection? Instance
+        {
+            get
+            {
+                if (!_instance) Debug.LogWarning("Accessed WebsocketConnection.Instance without an instance being present");
+                return _instance;
+            }
+            private set => _instance = value;
+        }
 
         private static WebSocket? _socket;
 
         public string game = null!;
         public MessageQueue messageQueue = null!;
         public CommandHandler commandHandler = null!;
+
+        public UnityEvent? onConnected;
+        public UnityEvent<string>? onError;
+        public UnityEvent<WebSocketCloseCode>? onDisconnected;
 
         private void Awake()
         {
@@ -42,7 +59,7 @@ namespace NeuroSdk.Websocket
         private async UniTask Reconnect()
         {
             await UniTask.SwitchToMainThread();
-            await UniTask.Delay(TimeSpan.FromSeconds(3));
+            await UniTask.Delay(TimeSpan.FromSeconds(RECONNECT_INTERVAL));
             await StartWs();
         }
 
@@ -118,6 +135,7 @@ namespace NeuroSdk.Websocket
 
             // Websocket callbacks get run on separate threads! Watch out
             _socket = new WebSocket(websocketUrl);
+            _socket.OnOpen += () => onConnected?.Invoke();
             _socket.OnMessage += bytes =>
             {
                 string message = Encoding.UTF8.GetString(bytes);
@@ -125,6 +143,7 @@ namespace NeuroSdk.Websocket
             };
             _socket.OnError += error =>
             {
+                onError?.Invoke(error);
                 if (error != "Unable to connect to the remote server")
                 {
                     Debug.LogError("Websocket connection has encountered an error!");
@@ -133,6 +152,7 @@ namespace NeuroSdk.Websocket
             };
             _socket.OnClose += code =>
             {
+                onDisconnected?.Invoke(code);
                 if (code != WebSocketCloseCode.Abnormal) Debug.LogWarning($"Websocket connection has been closed with code {code}!");
                 Reconnect().Forget();
             };
@@ -188,6 +208,7 @@ namespace NeuroSdk.Websocket
             _socket.SendText(message);
         }
 
+        [Obsolete("Use WebsocketConnection.Instance.Send instead")]
         public static void TrySend(OutgoingMessageBuilder messageBuilder)
         {
             if (Instance == null)
@@ -199,6 +220,7 @@ namespace NeuroSdk.Websocket
             Instance.Send(messageBuilder);
         }
 
+        [Obsolete("Use WebsocketConnection.Instance.SendImmediate instead")]
         public static void TrySendImmediate(OutgoingMessageBuilder messageBuilder)
         {
             if (Instance == null)

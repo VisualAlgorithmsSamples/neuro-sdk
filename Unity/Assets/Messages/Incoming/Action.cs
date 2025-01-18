@@ -86,7 +86,7 @@ namespace NeuroSdk.Messages.Incoming
                 return;
             }
 
-            WebsocketConnection.TrySend(new ActionResult(parsedData.Id, result));
+            WebsocketConnection.Instance!.Send(new ActionResult(parsedData.Id, result));
         }
 
         protected override UniTask ExecuteAsync(ParsedData? parsedData)

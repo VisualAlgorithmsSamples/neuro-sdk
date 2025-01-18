@@ -227,7 +227,7 @@ namespace NeuroSdk.Actions
 
             CurrentState = State.Forced;
             _shouldForceFunc = null;
-            WebsocketConnection.TrySend(new ActionsForce(_forceQueryGetter!(), _forceStateGetter!(), _forceEphemeralContext, _actions));
+            WebsocketConnection.Instance!.Send(new ActionsForce(_forceQueryGetter!(), _forceStateGetter!(), _forceEphemeralContext, _actions));
         }
 
         #endregion
