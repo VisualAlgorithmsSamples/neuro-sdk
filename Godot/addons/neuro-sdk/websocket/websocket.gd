@@ -2,7 +2,7 @@ extends Node
 
 
 signal connected
-signal connection_failed(reason: String)
+signal connection_failed(error: Error)
 signal disconnected(code: int)
 
 const POLL_INTERVAL := 1.0 / 30.0
@@ -72,7 +72,7 @@ func _ws_start() -> void:
 
 	_socket = WebSocketPeer.new() # idk if i can reuse the same one
 
-	var err: int = _socket.connect_to_url(ws_url)
+	var err: Error = _socket.connect_to_url(ws_url)
 	if err != OK:
 		push_warning("Could not connect to websocket, error code %d" % [err])
 		_ws_reconnect()
