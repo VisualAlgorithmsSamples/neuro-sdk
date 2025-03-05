@@ -38,6 +38,7 @@ Third-party SDKs created and maintained by the community.
 ### Tools
 - [Tony](https://github.com/Pasu4/neuro-api-tony) is a graphical testing interface, similar to Randy, but it allows the user to write messages manually.
 - [Jippity](https://github.com/EnterpriseScratchDev/neuro-api-jippity) is a testing tool that aims to be a more "realistic" version of Randy, by using OpenAI to mimic Neuro.
+- [Gary](https://github.com/Govorunb/gary) is another backend implementation for advanced use. Originally created for testing with local LLMs like Llama, now also has support for a Randy-like "random generator" mode and a web UI for Tony-like manual sending.
 
 ## Information 
 
