@@ -43,6 +43,7 @@ An action is a registerable command that Neuro can execute whenever she wants.
     "name": string,
     "description": string,
     "schema": {
+        "type": "object",
         [key: string]: any
     }?
 }
@@ -51,10 +52,10 @@ An action is a registerable command that Neuro can execute whenever she wants.
 #### Parameters
 - `name`: The name of the action, which is its _unique identifier_. This should be a lowercase string, with words separated by underscores or dashes (e.g. `"join_friend_lobby"`, `"use_item"`).
 - `description`: A plaintext description of what this action does. **This information will be directly received by Neuro.**
-- `schema`: A **valid** simple JSON schema object that describes how the response data should look like. If your action does not have any parameters, you can omit this field or set it to `{}`. **This information will be directly received by Neuro.**
+- `schema`: A **valid** simple JSON schema object that describes how the response data should look like. If your action does not have any parameters, you can omit this field or set it to `{}`. If you provide a schema, it must be of `type` `"object"`. **This information will be directly received by Neuro.**
 
 > [!Note]
-> Please do not use the following JSON schema keywords: `$anchor`, `$comment`, `$defs`, `$dynamicAnchor`, `$dynamicRef`, `$id`, `$ref`, `$schema`, `$vocabulary`, `additionalProperties`, `allOf`, `anyOf`, `contentEncoding`, `contentMediaType`, `contentSchema`, `dependentRequired`, `dependentSchemas`, `deprecated`, `description`, `else`, `if`, `maxProperties`, `minProperties`, `not`, `oneOf`, `patternProperties`, `readOnly`, `then`, `title`, `unevaluatedItems`, `unevaluatedProperties`, `writeOnly`.
+> The following JSON schema keywords are not supported and should not be used: `$anchor`, `$comment`, `$defs`, `$dynamicAnchor`, `$dynamicRef`, `$id`, `$ref`, `$schema`, `$vocabulary`, `additionalProperties`, `allOf`, `anyOf`, `contentEncoding`, `contentMediaType`, `contentSchema`, `dependentRequired`, `dependentSchemas`, `deprecated`, `description`, `else`, `if`, `maxProperties`, `minProperties`, `multipleOf`, `not`, `oneOf`, `patternProperties`, `readOnly`, `then`, `title`, `unevaluatedItems`, `unevaluatedProperties`, `uniqueItems`, `writeOnly`.
 
 ## Outgoing Messages (C2S, Game to Neuro)
 
