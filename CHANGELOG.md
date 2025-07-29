@@ -1,7 +1,7 @@
 # Changelog
 
 ## 29th of July 2025, 02:15 GMT
-- Added `uniqueItems` and `multipleOf` to the list of unsupported keywords in Action schemas. If you use them, you should update your actions accordingly.
+- Added `multipleOf` to the list of unsupported keywords in Action schemas and noted that `uniqueItems` may or may not work, and you should perform your own checks accordingly.
 - Clarified that Action schemas must have `"type": "object"`. If your schema has a different type, wrap it in an object with a property instead.
 
 ## 7th of January 2025, 12:15 GMT
