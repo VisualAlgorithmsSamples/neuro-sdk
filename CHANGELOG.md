@@ -1,6 +1,8 @@
 # Changelog
 
-Last update: 7th of January 2025, 12:20 GMT
+## 29th of July 2025, 02:15 GMT
+- Added `uniqueItems` and `multipleOf` to the list of unsupported keywords in Action schemas. If you use them, you should update your actions accordingly.
+- Clarified that Action schemas must have `"type": "object"`. If your schema has a different type, wrap it in an object with a property instead.
 
 ## 7th of January 2025, 12:15 GMT
 - Added python script for running web-based games which can be found [here](./Web%20Game%20Runner/).
