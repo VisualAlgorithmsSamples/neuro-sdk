@@ -55,7 +55,8 @@ An action is a registerable command that Neuro can execute whenever she wants.
 - `schema`: A **valid** simple JSON schema object that describes how the response data should look like. If your action does not have any parameters, you can omit this field or set it to `{}`. If you provide a schema, it must be of `type` `"object"`. **This information will be directly received by Neuro.**
 
 > [!Note]
-> The following JSON schema keywords are not supported and should not be used: `$anchor`, `$comment`, `$defs`, `$dynamicAnchor`, `$dynamicRef`, `$id`, `$ref`, `$schema`, `$vocabulary`, `additionalProperties`, `allOf`, `anyOf`, `contentEncoding`, `contentMediaType`, `contentSchema`, `dependentRequired`, `dependentSchemas`, `deprecated`, `description`, `else`, `if`, `maxProperties`, `minProperties`, `multipleOf`, `not`, `oneOf`, `patternProperties`, `readOnly`, `then`, `title`, `unevaluatedItems`, `unevaluatedProperties`, `uniqueItems`, `writeOnly`.
+> The following JSON schema keywords are probably not supported: `$anchor`, `$comment`, `$defs`, `$dynamicAnchor`, `$dynamicRef`, `$id`, `$ref`, `$schema`, `$vocabulary`, `additionalProperties`, `allOf`, `anyOf`, `contentEncoding`, `contentMediaType`, `contentSchema`, `dependentRequired`, `dependentSchemas`, `deprecated`, `description`, `else`, `if`, `maxProperties`, `minProperties`, `multipleOf`, `not`, `oneOf`, `patternProperties`, `readOnly`, `then`, `title`, `unevaluatedItems`, `unevaluatedProperties`, `writeOnly`.
+> It is not known if `uniqueItems` works or not, you may pass it if you need it, but you should not trust it and you should perform your own checks as well.
 
 ## Outgoing Messages (C2S, Game to Neuro)
 
