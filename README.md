@@ -36,6 +36,7 @@ Third-party SDKs created and maintained by the community.
 - [Python SDK](https://github.com/CoolCat467/Neuro-API)
 - [Kotlin SDK](https://github.com/RedEpicness/neuro-game-sdk-kotlin)
 - [C++ SDK](https://github.com/chris-pie/neuro-sdk-websocketpp)
+- [C# SDK](https://github.com/pandapanda135/CSharp-Neuro-SDK)
 
 ### Tools
 - [Tony](https://github.com/Pasu4/neuro-api-tony) is a graphical testing interface, similar to Randy, but it allows the user to write messages manually.
