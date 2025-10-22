@@ -25,6 +25,14 @@ SDKs created and maintained by Alex, which are located in this repository. Pull 
 
 ## Community-Maintained
 
+> [!Caution]
+> These links are provided **solely for convenience** so that community members can find other implementations more easily.  
+> We **do not review, verify, or endorse** any of the projects listed below, and they may change or stop working at any time.  
+> Use any community-maintained SDKs, tools, or code **at your own risk**. We **do not take any responsibility** for their functionality, security, or reliability.
+
+<details>
+<summary>I understand. Click to expand and view list.</summary>
+
 ### SDKs
 Third-party SDKs created and maintained by the community.
 - [Rust SDK](https://github.com/chayleaf/rust-neuro-sama-game-api)
@@ -43,6 +51,8 @@ Third-party SDKs created and maintained by the community.
 - [Tony](https://github.com/Pasu4/neuro-api-tony) is a graphical testing interface, similar to Randy, but it allows the user to write messages manually.
 - [Jippity](https://github.com/EnterpriseScratchDev/neuro-api-jippity) is a testing tool that aims to be a more "realistic" version of Randy, by using OpenAI to mimic Neuro.
 - [Gary](https://github.com/Govorunb/gary) is another backend implementation for advanced use. Originally created for testing with local LLMs like Llama, now also has support for a Randy-like "random generator" mode and a web UI for Tony-like manual sending.
+
+</details>
 
 ## Information 
 
